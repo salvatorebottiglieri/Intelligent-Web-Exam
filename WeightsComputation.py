@@ -8,6 +8,15 @@ def SORTD(user1,user2,label):
     diffs.append(abs(items[f"{label}_x"]- items[f"{label}_y"]))
     return float(sum(diffs) / 2)
 
+
+def SOPD(user1,user2):
+    diffs = []
+    items = pd.merge(priority_list(user1), priority_list(user2), how="inner", on=["movieid"])
+    diffs.append(abs(items["priority_x"]- items["priority_y"]))
+    return float(sum(diffs) / 2)
+
+
+
 def priority_list(user):
     dataset = read_dataset()
     user_rows = dataset[dataset["userId"] == user]
@@ -15,12 +24,8 @@ def priority_list(user):
 
     user_rows["priority"] = range(1, user_rows.shape[0] + 1)
 
+    return user_rows[["movieid","priority"]]
 
-
-    return user_rows["movieId"].tolist()
-
-def SOPD(user1,user2):
-    raise NotImplementedError
 
 def get_items_in_common(user1, user2):
     dataset = read_dataset()
