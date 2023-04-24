@@ -6,6 +6,6 @@ dataset = read_dataset()
 
 print(dataset["rating"].describe())
 np.savetxt("ratings.csv", dataset["rating"].unique(), delimiter=",")
-
+#ciao
 
 
