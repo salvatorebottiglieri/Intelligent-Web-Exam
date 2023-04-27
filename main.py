@@ -1,12 +1,13 @@
 import numpy as np
-from Utils import read_dataset
-from WeightsComputation import get_items_in_common, priority_list
+from src.Utils import read_dataset
+from src.WeightsComputation import SORTD, get_items_in_common, priority_list
 
 
 dataset = read_dataset()
 
-print(dataset["rating"])
-#np.savetxt("ratings.csv", dataset["rating"].unique(), delimiter=",")
-priority_list(1)
+
+movies_named_5 = dataset[dataset["movieId"] == 5]
+# print(movies_named_5)
 
 
+print(SORTD(4, 8, "rating"))
