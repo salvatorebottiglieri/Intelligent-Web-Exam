@@ -10,6 +10,13 @@ def sortd(user1: int, user2: int, label: str, dataset: pd.DataFrame) -> float:
     return np.sum(diffs) / 2
 
 
+def get_items_in_common(user1: int, user2: int, dataset: pd.DataFrame) -> pd.DataFrame:
+    user1_rows = dataset[dataset["userId"] == user1]
+    user2_rows = dataset[dataset["userId"] == user2]
+    common_rows = pd.merge(user1_rows, user2_rows, how="inner", on=["movieId"])
+    return common_rows
+
+
 def sopd(user1: int, user2: int, dataset: pd.DataFrame) -> float:
     items = pd.merge(
         priority_list(user1, dataset),
@@ -30,8 +37,20 @@ def priority_list(user: int, dataset: pd.DataFrame) -> pd.DataFrame:
     return user_rows[["movieId", "priority"]]
 
 
-def get_items_in_common(user1: int, user2: int, dataset: pd.DataFrame) -> pd.DataFrame:
-    user1_rows = dataset[dataset["userId"] == user1]
-    user2_rows = dataset[dataset["userId"] == user2]
-    common_rows = pd.merge(user1_rows, user2_rows, how="inner", on=["movieId"])
-    return common_rows
+def mci(dataset: pd.DataFrame) -> int:
+    items = dataset["movieId"].unique()
+    return items.shape[0]
+
+
+def proportion(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
+    items = get_items_in_common(user1, user2, dataset)
+    if items.empty:
+        return 0.0
+    return items.shape[0] / mci(dataset)
+
+    
+def mratediff(user1: int, user2: int, n_star: int, dataset: pd.DataFrame) -> np.float16:
+    return (n_star-1) * proportion(user1, user2, dataset)
+    
+
+
