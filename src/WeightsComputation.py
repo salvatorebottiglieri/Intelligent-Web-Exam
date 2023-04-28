@@ -37,20 +37,26 @@ def priority_list(user: int, dataset: pd.DataFrame) -> pd.DataFrame:
     return user_rows[["movieId", "priority"]]
 
 
-def mci(dataset: pd.DataFrame) -> int:
-    items = dataset["movieId"].unique()
-    return items.shape[0]
+def mci(user1: int, user2: int, dataset: pd.DataFrame) -> int:
+    n_user1_items = dataset[dataset["userId"] == user1]["movieId"].shape[0]
+    n_user2_items = dataset[dataset["userId"] == user2]["movieId"].shape[0]
+
+    if n_user1_items < n_user2_items:
+        return n_user1_items
+    return n_user2_items
 
 
 def proportion(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
     items = get_items_in_common(user1, user2, dataset)
     if items.empty:
         return 0.0
-    return items.shape[0] / mci(dataset)
+    return items.shape[0] / mci(user1, user2, dataset) 
 
     
 def mratediff(user1: int, user2: int, n_star: int, dataset: pd.DataFrame) -> np.float16:
-    return (n_star-1) * proportion(user1, user2, dataset)
+    return (n_star-1) * get_items_in_common(user1, user2, dataset).shape[0]
     
 
+def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
+    return sortd(user1, user2, "rating", dataset) / mratediff(user1, user2, dataset["rating"].max(), dataset)
 
