@@ -15,10 +15,10 @@ def sopd(user1: int, user2: int, dataset: pd.DataFrame) -> float:
         priority_list(user1, dataset),
         priority_list(user2, dataset),
         how="inner",
-        on=["movieid"],
+        on=["movieId"],
     )
     diffs = abs(items["priority_x"].values - items["priority_y"].values) 
-    return float(sum(diffs) / 2)
+    return np.sum(diffs) / 2
 
 
 def priority_list(user: int, dataset: pd.DataFrame) -> pd.DataFrame:
@@ -27,7 +27,7 @@ def priority_list(user: int, dataset: pd.DataFrame) -> pd.DataFrame:
 
     user_rows["priority"] = range(1, user_rows.shape[0] + 1)
 
-    return user_rows[["movieid", "priority"]]
+    return user_rows[["movieId", "priority"]]
 
 
 def get_items_in_common(user1: int, user2: int, dataset: pd.DataFrame) -> pd.DataFrame:
