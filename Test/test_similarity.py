@@ -92,9 +92,11 @@ def test_should_n_sord_return_float_greater_than_zero(dataset):
     assert isinstance(result, float) is True
     assert result > 0.0
 
+
 def test_should_mci_return_right_number(dataset):
     user1 = 4
     user2 = 8
     result = mci(user1, user2, dataset)
     assert isinstance(result, int) is True
     assert result == 31
+

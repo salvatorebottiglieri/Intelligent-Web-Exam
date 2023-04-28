@@ -60,3 +60,12 @@ def mratediff(user1: int, user2: int, n_star: int, dataset: pd.DataFrame) -> np.
 def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
     return sortd(user1, user2, "rating", dataset) / mratediff(user1, user2, dataset["rating"].max(), dataset)
 
+def m_sopd(items_in_common: int) -> np.float16:
+    if items_in_common % 2 == 0:
+        result =  (items_in_common / 2)**2
+    else:
+        result = items_in_common**2 - items_in_common - 2*(items_in_common/2)**2
+    return result
+
+def n_sopd(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
+    return sopd(user1, user2, dataset) / m_sopd(mci(user1, user2, dataset))
