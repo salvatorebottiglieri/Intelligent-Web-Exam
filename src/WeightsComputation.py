@@ -24,7 +24,7 @@ def sopd(user1: int, user2: int, dataset: pd.DataFrame) -> float:
         how="inner",
         on=["movieId"],
     )
-    diffs = abs(items["priority_x"].values - items["priority_y"].values) 
+    diffs = abs(items["priority_x"].values - items["priority_y"].values)
     return np.sum(diffs) / 2
 
 
@@ -50,22 +50,37 @@ def proportion(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
     items = get_items_in_common(user1, user2, dataset)
     if items.empty:
         return 0.0
-    return items.shape[0] / mci(user1, user2, dataset) 
+    return items.shape[0] / mci(user1, user2, dataset)
 
-    
+
 def mratediff(user1: int, user2: int, n_star: int, dataset: pd.DataFrame) -> np.float16:
-    return (n_star-1) * get_items_in_common(user1, user2, dataset).shape[0]
-    
+    return (n_star - 1) * get_items_in_common(user1, user2, dataset).shape[0]
+
 
 def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
-    return sortd(user1, user2, "rating", dataset) / mratediff(user1, user2, dataset["rating"].max(), dataset)
+    return sortd(user1, user2, "rating", dataset) / mratediff(
+        user1, user2, dataset["rating"].max(), dataset
+    )
+
 
 def m_sopd(items_in_common: int) -> np.float16:
     if items_in_common % 2 == 0:
-        result =  (items_in_common / 2)**2
+        result = (items_in_common / 2) ** 2
     else:
-        result = items_in_common**2 - items_in_common - 2*(items_in_common/2)**2
+        result = items_in_common ** 2 - items_in_common - 2 * (items_in_common / 2) ** 2
     return result
+
 
 def n_sopd(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
     return sopd(user1, user2, dataset) / m_sopd(mci(user1, user2, dataset))
+
+
+def decay_function(
+    alpha: float, user1: int, user2: int, dataset: pd.DataFrame
+) -> np.float16:
+    if alpha <= 1:
+        raise Exception("Alpha must be greater than 1")
+    return alpha / alpha + (
+        sortd(user1, user2, "rating", dataset)
+        / get_items_in_common(user1, user2, dataset).shape[0]
+    )
