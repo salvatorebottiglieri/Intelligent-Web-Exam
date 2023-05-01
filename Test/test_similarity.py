@@ -102,6 +102,7 @@ def test_should_n_sord_return_float_greater_than_zero(dataset):
     assert isinstance(result, float) is True
     assert result > 0.0
 
+
 def test_should_n_sord_return_zero_when_users_not_have_items_in_common(dataset):
     user1 = 1
     user2 = 2
@@ -109,14 +110,13 @@ def test_should_n_sord_return_zero_when_users_not_have_items_in_common(dataset):
     assert isinstance(result, float) is True
     assert result == 0.0
 
+
 def test_should_mci_return_right_number(dataset):
     user1 = 4
     user2 = 8
     result = mci(user1, user2, dataset)
     assert isinstance(result, int) is True
     assert result == 31
-
-
 
 
 def test_should_decay_function_raise_error_when_alpha_is_less_than_equal_one(dataset):

@@ -129,7 +129,7 @@ def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> float:
     '''
     if get_items_in_common(user1, user2, dataset).shape[0] == 0:
         return 0.0
-        
+
     return sortd(user1, user2, "rating", dataset) / mratediff(
         user1, user2, dataset["rating"].max(), dataset
     )
@@ -203,3 +203,16 @@ def time_factor(d_alpha:float,t_alpha:float,beta:float,user1:int,user2:int,datas
     second_addend = beta * (1- n_sord(user1, user2, dataset))
 
     return first_addend + second_addend
+
+def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
+    '''
+    Base_weight is a function that computes the similarity of two users that have at least
+    one item in common, ignoring time factor.
+
+    :param eor: says how much the user rating affects the base weight
+    :param user1: The first user
+    :param user2: The second user
+    :param dataset: The dataset to be used for the computation
+    :return: The base weight between two users.
+    '''
+    return proportion(user1, user2, dataset) * (1 - (sortd(user1, user2, "rating", dataset) / mratediff(user1, user2, 5, dataset))**(1/eor) )
