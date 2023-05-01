@@ -11,6 +11,7 @@ from src.WeightsComputation import (
     get_items_in_common,
     decay_function,
     time_factor,
+    base_weight,
 )
 
 
@@ -160,3 +161,24 @@ def test_should_time_factor_function_return_float(dataset):
     print(result)
     assert isinstance(result, float) is True
     assert result > 0.0
+
+
+def test_should_base_weight_return_zero_when_users_not_have_items_in_common(dataset):
+    user1 = 1
+    user2 = 2
+    eor = 1
+    result = base_weight(eor, user1, user2, dataset)
+    assert isinstance(result, float) is True
+    assert result == 0.0
+
+
+def test_should_base_weight_return_value_between_zero_and_one_when_users_have_at_least_one_item_in_common(
+    dataset,
+):
+    user1 = 4
+    user2 = 8
+    eor = 1
+    result = base_weight(eor, user1, user2, dataset)
+    assert isinstance(result, float) is True
+    assert result > 0.0
+    assert result < 1.0

@@ -215,4 +215,10 @@ def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     :param dataset: The dataset to be used for the computation
     :return: The base weight between two users.
     '''
-    return proportion(user1, user2, dataset) * (1 - (sortd(user1, user2, "rating", dataset) / mratediff(user1, user2, 5, dataset))**(1/eor) )
+    try:
+        result =  proportion(user1, user2, dataset) * (1 - (sortd(user1, user2, "rating", dataset) / mratediff(user1, user2, 5, dataset))**(1/eor) )
+    except ZeroDivisionError:
+        result = 0.0
+    finally:
+        return result
+
