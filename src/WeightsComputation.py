@@ -127,6 +127,9 @@ def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> float:
     :param dataset: The dataset to be used for the computation
     :return: The normalized sortd between two users.
     '''
+    if get_items_in_common(user1, user2, dataset).shape[0] == 0:
+        return 0.0
+        
     return sortd(user1, user2, "rating", dataset) / mratediff(
         user1, user2, dataset["rating"].max(), dataset
     )
@@ -173,27 +176,30 @@ def decay_function(
     '''
     if alpha <= 1:
         raise Exception("Alpha must be greater than 1")
-    denominator = alpha + (
-        sortd(user1, user2, "timestamp", dataset)
-        / get_items_in_common(user1, user2, dataset).shape[0]
-    )    
-    return alpha / denominator
+    try:
+        sortd_fraction = sortd(user1, user2, "timestamp", dataset) / get_items_in_common(user1, user2, dataset).shape[0]
+    except ZeroDivisionError:
+        sortd_fraction = 0
+    finally:         
+        denominator = alpha + sortd_fraction
+        return alpha / denominator
 
-def time_factor(alpha:float,beta:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
+def time_factor(d_alpha:float,t_alpha:float,beta:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     '''
     Time_factor is a function that computes the time factor between two users.
 
-    :param alpha: The alpha parameter
+    :param d_alpha: The alpha parameter for decay function
+    :param t_alpha: The alpha parameter for time factor
     :param beta: The beta parameter
     :param user1: The first user
     :param user2: The second user
     :param dataset: The dataset to be used for the computation
     :return: The time factor between two users.
     '''
-    if alpha + beta != 1:
+    if t_alpha + beta != 1:
         raise Exception("Alpha + Beta must be equal to 1")
     
-    first_addend = alpha * decay_function(alpha, user1, user2, dataset)
+    first_addend = t_alpha * decay_function(d_alpha, user1, user2, dataset)
     second_addend = beta * (1- n_sord(user1, user2, dataset))
 
     return first_addend + second_addend

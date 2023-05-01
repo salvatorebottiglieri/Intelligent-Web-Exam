@@ -10,6 +10,7 @@ from src.WeightsComputation import (
     sortd,
     get_items_in_common,
     decay_function,
+    time_factor,
 )
 
 
@@ -101,6 +102,12 @@ def test_should_n_sord_return_float_greater_than_zero(dataset):
     assert isinstance(result, float) is True
     assert result > 0.0
 
+def test_should_n_sord_return_zero_when_users_not_have_items_in_common(dataset):
+    user1 = 1
+    user2 = 2
+    result = n_sord(user1, user2, dataset)
+    assert isinstance(result, float) is True
+    assert result == 0.0
 
 def test_should_mci_return_right_number(dataset):
     user1 = 4
@@ -108,6 +115,8 @@ def test_should_mci_return_right_number(dataset):
     result = mci(user1, user2, dataset)
     assert isinstance(result, int) is True
     assert result == 31
+
+
 
 
 def test_should_decay_function_raise_error_when_alpha_is_less_than_equal_one(dataset):
@@ -119,10 +128,35 @@ def test_should_decay_function_raise_error_when_alpha_is_less_than_equal_one(dat
         assert str(ex.value) == "Alpha must be greater than 1"
 
 
-def test_should_decay_function_return_float(dataset):
-    user1 = 4
-    user2 = 8
+def test_should_decay_function_return_one_when_users_not_have_items_in_common(dataset):
+    user1 = 1
+    user2 = 2
     alpha = 1.5
     result = decay_function(alpha, user1, user2, dataset)
+    assert isinstance(result, float) is True
+    assert result == 1.0
+
+
+def test_should_time_factor_function_raise_exception_if_alpha_plus_beta_not_equal_one(
+    dataset,
+):
+    user1 = 4
+    user2 = 8
+    alpha = 0.5
+    beta = 1.5
+    d_alpha = 1.5
+    with pytest.raises(Exception) as ex:
+        time_factor(d_alpha, alpha, beta, user1, user2, dataset)
+        assert str(ex.value) == "Alpha plus Beta must be equal to 1"
+
+
+def test_should_time_factor_function_return_float(dataset):
+    user1 = 4
+    user2 = 8
+    alpha = 0.5
+    d_alpha = 1.5
+    beta = 0.5
+    result = time_factor(d_alpha, alpha, beta, user1, user2, dataset)
+    print(result)
     assert isinstance(result, float) is True
     assert result > 0.0
