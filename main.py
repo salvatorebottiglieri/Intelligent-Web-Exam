@@ -1,13 +1,14 @@
 import numpy as np
 from src.Utils import read_dataset
-from src.WeightsComputation import  mratediff, n_sord, proportion, sopd
+from src.WeightsComputation import  decay_function, time_factor
 
 
 dataset = read_dataset()
 
-
-
-
-value = n_sord(4, 8, dataset)
-
-print(value)
+user1 = 1
+user2 = 2
+alpha = 0.4
+d_alpha = 55
+beta = 0.6
+result = time_factor(d_alpha,alpha, beta, user1, user2,dataset)
+print(result)
