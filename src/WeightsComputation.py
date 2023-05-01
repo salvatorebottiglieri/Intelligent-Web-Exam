@@ -90,7 +90,7 @@ def mci(user1: int, user2: int, dataset: pd.DataFrame) -> int:
     return n_user2_items
 
 
-def proportion(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
+def proportion(user1: int, user2: int, dataset: pd.DataFrame) -> float:
     '''
     Proportion is a function that computes the proportion of items in common between two users.
 
@@ -105,7 +105,7 @@ def proportion(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
     return items.shape[0] / mci(user1, user2, dataset)
 
 
-def mratediff(user1: int, user2: int, n_star: int, dataset: pd.DataFrame) -> np.float16:
+def mratediff(user1: int, user2: int, n_star: int, dataset: pd.DataFrame) -> float:
     '''
     Mratediff is a function that computes the maximum rating difference between two users.
 
@@ -118,7 +118,7 @@ def mratediff(user1: int, user2: int, n_star: int, dataset: pd.DataFrame) -> np.
     return (n_star - 1) * get_items_in_common(user1, user2, dataset).shape[0]
 
 
-def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
+def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> float:
     '''
     N_sord is a function that computes the normalized sortd between two users.
 
@@ -132,7 +132,7 @@ def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
     )
 
 
-def m_sopd(items_in_common: int) -> np.float16:
+def m_sopd(items_in_common: int) -> float:
     '''
     M_sopd is a function that computes the maximum sum of the absolute 
     differences between the priorities of the items in common between two users.
@@ -147,7 +147,7 @@ def m_sopd(items_in_common: int) -> np.float16:
     return result
 
 
-def n_sopd(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
+def n_sopd(user1: int, user2: int, dataset: pd.DataFrame) -> float:
     '''
     N_sopd is a function that computes the normalized sopd between two users.
 
@@ -161,7 +161,7 @@ def n_sopd(user1: int, user2: int, dataset: pd.DataFrame) -> np.float16:
 
 def decay_function(
     alpha: float, user1: int, user2: int, dataset: pd.DataFrame
-) -> np.float16:
+) -> float:
     '''
     Decay_function is a function that computes the decay function between two users.
     
@@ -173,7 +173,27 @@ def decay_function(
     '''
     if alpha <= 1:
         raise Exception("Alpha must be greater than 1")
-    return alpha / alpha + (
+    denominator = alpha + (
         sortd(user1, user2, "timestamp", dataset)
         / get_items_in_common(user1, user2, dataset).shape[0]
-    )
+    )    
+    return alpha / denominator
+
+def time_factor(alpha:float,beta:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
+    '''
+    Time_factor is a function that computes the time factor between two users.
+
+    :param alpha: The alpha parameter
+    :param beta: The beta parameter
+    :param user1: The first user
+    :param user2: The second user
+    :param dataset: The dataset to be used for the computation
+    :return: The time factor between two users.
+    '''
+    if alpha + beta != 1:
+        raise Exception("Alpha + Beta must be equal to 1")
+    
+    first_addend = alpha * decay_function(alpha, user1, user2, dataset)
+    second_addend = beta * (1- n_sord(user1, user2, dataset))
+
+    return first_addend + second_addend
