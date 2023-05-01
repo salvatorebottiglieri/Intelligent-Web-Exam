@@ -5,7 +5,7 @@ import pandas as pd
 def sortd(user1: int, user2: int, label: str, dataset: pd.DataFrame) -> float:
     """
     Sortd is a function that computes the sum of the absolute differences between
-    the ratings of the items in common between two users.
+    the ratings (or timestamps) of the items in common between two users.
 
     :param user1: The first user
     :param user2: The second user
@@ -174,6 +174,6 @@ def decay_function(
     if alpha <= 1:
         raise Exception("Alpha must be greater than 1")
     return alpha / alpha + (
-        sortd(user1, user2, "rating", dataset)
+        sortd(user1, user2, "", dataset)
         / get_items_in_common(user1, user2, dataset).shape[0]
     )
