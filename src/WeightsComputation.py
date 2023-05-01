@@ -174,6 +174,6 @@ def decay_function(
     if alpha <= 1:
         raise Exception("Alpha must be greater than 1")
     return alpha / alpha + (
-        sortd(user1, user2, "", dataset)
+        sortd(user1, user2, "timestamp", dataset)
         / get_items_in_common(user1, user2, dataset).shape[0]
     )
