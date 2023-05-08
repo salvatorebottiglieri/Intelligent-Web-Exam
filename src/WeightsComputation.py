@@ -222,13 +222,13 @@ def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     finally:
         return result
 
-def similarity(active_user, neighbors):
+def similarity(active_user, neighbors, graph):
     direct_similarity = {}
     indirect_similarity = {}
 
     # Calculate similarity of active user with direct neighbors
     for neighbor in neighbors:
-        direct_similarity[neighbor] = calculate_similarity(active_user, neighbor)
+        direct_similarity[neighbor] = calculate_similarity(active_user, neighbor, graph)
 
     # Calculate similarity of indirect neighbors
     for neighbor1 in neighbors:
@@ -238,8 +238,25 @@ def similarity(active_user, neighbors):
 
     return indirect_similarity
 
-def calculate_similarity(user1, user2):
-    # Calculate similarity between user1 and user2
-    # ...
+def calculate_similarity(user1, user2, graph):
+    Qa = [user1]
+    Qb = []
+    max_sim = 0
+    sim = {user1: 1}
 
-    return similarity
+    while Qa:
+        c = Qa.pop(0)
+        Qb.append(c)
+
+        for dn in graph[c]:
+            if dn not in sim:
+                sim[dn] = 0
+
+            if sim[dn] < sim[c] * graph[c][dn]:
+                sim[dn] = sim[c] * graph[c][dn]
+                max_sim = max(max_sim, sim[dn])
+
+                if dn not in Qb and dn not in Qa and sim[dn] > max_sim / mu:
+                    Qa.append(dn)
+
+    return max_sim
