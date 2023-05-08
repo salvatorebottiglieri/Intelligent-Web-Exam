@@ -222,3 +222,24 @@ def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     finally:
         return result
 
+def similarity(active_user, neighbors):
+    direct_similarity = {}
+    indirect_similarity = {}
+
+    # Calculate similarity of active user with direct neighbors
+    for neighbor in neighbors:
+        direct_similarity[neighbor] = calculate_similarity(active_user, neighbor)
+
+    # Calculate similarity of indirect neighbors
+    for neighbor1 in neighbors:
+        for neighbor2 in neighbors:
+            if neighbor1 != neighbor2:
+                indirect_similarity[(active_user, neighbor1, neighbor2)] = direct_similarity[neighbor1] * direct_similarity[neighbor2]
+
+    return indirect_similarity
+
+def calculate_similarity(user1, user2):
+    # Calculate similarity between user1 and user2
+    # ...
+
+    return similarity
