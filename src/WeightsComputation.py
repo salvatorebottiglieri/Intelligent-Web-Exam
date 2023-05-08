@@ -222,11 +222,13 @@ def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     finally:
         return result
 
+from collections import deque
+
 def similarity(active_user, neighbors, graph):
     direct_similarity = {}
     indirect_similarity = {}
 
-    # Calculate similarity of active user with direct neighbors
+    # Calculate similarity of the active user with direct neighbors
     for neighbor in neighbors:
         direct_similarity[neighbor] = calculate_similarity(active_user, neighbor, graph)
 
@@ -236,7 +238,36 @@ def similarity(active_user, neighbors, graph):
             if neighbor1 != neighbor2:
                 indirect_similarity[(active_user, neighbor1, neighbor2)] = direct_similarity[neighbor1] * direct_similarity[neighbor2]
 
+                # Find all paths between neighbor1 and neighbor2
+                paths = find_paths(neighbor1, neighbor2, graph)
+
+                # Take the maximum similarity value among the paths
+                max_sim = 0
+                for path in paths:
+                    sim = 1
+                    for i in range(len(path) - 1):
+                        sim *= graph[path[i]][path[i+1]]
+                    max_sim = max(max_sim, sim)
+
+                indirect_similarity[(neighbor1, neighbor2)] = max_sim
+
     return indirect_similarity
+
+def find_paths(start, end, graph):
+    # Find all paths between start and end nodes in graph
+    paths = []
+    queue = deque([[start]])
+    while queue:
+        path = queue.popleft()
+        node = path[-1]
+        if node == end:
+            paths.append(path)
+        else:
+            for neighbor in graph[node]:
+                if neighbor not in path:
+                    new_path = path + [neighbor]
+                    queue.append(new_path)
+    return paths
 
 def calculate_similarity(user1, user2, graph):
     Qa = [user1]
