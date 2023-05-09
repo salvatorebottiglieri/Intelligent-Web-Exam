@@ -1,14 +1,12 @@
 import numpy as np
+from src.Model import SimilarityMatrix
 from src.Utils import read_dataset
 from src.WeightsComputation import  decay_function, time_factor
 
 
-dataset = read_dataset()
+gr = SimilarityMatrix(10)
+gr.add_edge(4, 8, 0.5)
 
-user1 = 1
-user2 = 2
-alpha = 0.4
-d_alpha = 55
-beta = 0.6
-result = time_factor(d_alpha,alpha, beta, user1, user2,dataset)
-print(result)
+print(gr.graph)
+
+assert gr.get_neighbors(8) == [0.5]

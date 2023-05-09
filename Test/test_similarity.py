@@ -12,6 +12,7 @@ from src.WeightsComputation import (
     decay_function,
     time_factor,
     base_weight,
+    weight,
 )
 
 
@@ -173,12 +174,32 @@ def test_should_base_weight_return_zero_when_users_not_have_items_in_common(data
 
 
 def test_should_base_weight_return_value_between_zero_and_one_when_users_have_at_least_one_item_in_common(
-    dataset,
+    dataset
 ):
     user1 = 4
     user2 = 8
-    eor = 1
+    eor = 1.0
     result = base_weight(eor, user1, user2, dataset)
     assert isinstance(result, float) is True
     assert result > 0.0
     assert result < 1.0
+
+def test_should_weight_return_value_between_zero_and_one_when_users_have_at_least_one_item_in_common(
+        dataset
+):
+    user1 = 4
+    user2 = 8
+    eot = 1.0
+    result = weight(user1=user1, user2=user2,eot=eot, dataset=dataset)
+    assert isinstance(result, float) is True
+    assert result > 0.0
+    assert result < 1.0
+
+
+def test_should_weight_return_zero_when_users_not_have_items_in_common(dataset):
+    user1 = 1
+    user2 = 2
+    eot = 5.0
+    result = weight(user1=user1, user2=user2,eot=eot, dataset=dataset)
+    assert isinstance(result, float) is True
+    assert result == 0.0

@@ -222,3 +222,16 @@ def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     finally:
         return result
 
+def weight(user1: int, user2:int, eot:float, dataset:pd.DataFrame) -> float:
+    '''
+    weight is a function that computes the similarity of two users that have at least
+    one item in common, considering time factor.
+
+    :param eot: says how much the time factor affects the weight
+    :param user1: The first user
+    :param user2: The second user
+    :param dataset: The dataset to be used for the computation
+    :return: The weight between two users.
+    '''
+    
+    return base_weight(eot, user1, user2, dataset) * (eot + ((1 - eot) * time_factor(2, 0.5, 0.5, user1, user2, dataset)) )
