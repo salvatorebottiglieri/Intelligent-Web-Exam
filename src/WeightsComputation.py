@@ -235,3 +235,43 @@ def weight(user1: int, user2:int, eot:float, dataset:pd.DataFrame) -> float:
     '''
     
     return base_weight(eot, user1, user2, dataset) * (eot + ((1 - eot) * time_factor(2, 0.5, 0.5, user1, user2, dataset)) )
+
+
+def find_paths(start, end, graph):
+    # Find all paths between start and end nodes in graph
+    paths = []
+    queue = deque([[start]])
+    while queue:
+        path = queue.popleft()
+        node = path[-1]
+        if node == end:
+            paths.append(path)
+        else:
+            for neighbor in graph[node]:
+                if neighbor not in path:
+                    new_path = path + [neighbor]
+                    queue.append(new_path)
+    return paths
+
+def calculate_similarity(user1, user2, graph):
+    Qa = [user1]
+    Qb = []
+    max_sim = 0
+    sim = {user1: 1}
+
+    while Qa:
+        c = Qa.pop(0)
+        Qb.append(c)
+
+        for dn in graph[c]:
+            if dn not in sim:
+                sim[dn] = 0
+
+            if sim[dn] < sim[c] * graph[c][dn]:
+                sim[dn] = sim[c] * graph[c][dn]
+                max_sim = max(max_sim, sim[dn])
+
+                if dn not in Qb and dn not in Qa and sim[dn] > max_sim / mu:
+                    Qa.append(dn)
+
+    return max_sim
