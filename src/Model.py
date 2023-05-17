@@ -23,7 +23,6 @@ class SimilarityMatrix:
 
 
     def are_connected(self, a: int, b: int) -> bool:
-        df = read_dataset()
         return self.graph[a-1][b-1] != np.NINF
 
 
@@ -31,7 +30,7 @@ class SimilarityMatrix:
         return self.graph[a-1][b-1]
     
     def get_neighbors(self, node: int) -> list:
-        return [x for x in self.graph[node-1] if x != np.NINF]
+        return [i+1 for i,x in enumerate(self.graph[node-1]) if x != np.NINF]
     
     def remove_edge(self, a: int, b: int) -> None:
         if not self.are_connected(a, b):
