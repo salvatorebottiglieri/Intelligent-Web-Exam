@@ -11,7 +11,7 @@ point values. The value of an edge between two users is the similarity between t
 both the connections between users and the similarity between them: a value different from -inf
 means that there is an edge between two users and the value of the edge is the similarity between.
 """
-
+ 
 
 class SimilarityMatrix:
     def __init__(self, v: int) -> None:
@@ -24,7 +24,7 @@ class SimilarityMatrix:
 
     def are_connected(self, a: int, b: int) -> bool:
         df = read_dataset()
-        return len(get_items_in_common(a, b, df)) > 0
+        return self.graph[a-1][b-1] != np.NINF
 
 
     def get_edge_value(self, a: int, b: int) -> np.float16:
