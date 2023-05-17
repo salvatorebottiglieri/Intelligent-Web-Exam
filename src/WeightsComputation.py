@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+from queue import Queue
+
+from src.Model import SimilarityMatrix
 
 
 def sortd(user1: int, user2: int, label: str, dataset: pd.DataFrame) -> float:
@@ -237,6 +240,13 @@ def weight(user1: int, user2:int, eot:float, dataset:pd.DataFrame) -> float:
     return base_weight(eot, user1, user2, dataset) * (eot + ((1 - eot) * time_factor(2, 0.5, 0.5, user1, user2, dataset)) )
 
 
+def sim(user1: int, user2: int, graph: SimilarityMatrix) -> float:
+    if graph.are_connected(user1, user2):
+        return weight(user1, user2, 0.5, dataset)
+    
+    return sim(user1, user2, dataset) 
+        
+
 def find_paths(start, end, graph):
     # Find all paths between start and end nodes in graph
     paths = []
@@ -275,3 +285,37 @@ def calculate_similarity(user1, user2, graph):
                     Qa.append(dn)
 
     return max_sim
+
+def compute_similarity(user_item_graph, active_user, mu):
+    Qa = Queue()
+    Qb = Queue()
+    Qa.put(active_user)
+    MaxSim = {active_user: 0}
+    similarities = {}
+
+    while not Qa.empty():
+        C = Qa.get()
+        Qb.put(C)
+
+        for Dn in user_item_graph.get_neighbors(C):
+            if user_item_graph.get_edge_value(Dn, active_user) < (
+                user_item_graph.get_edge_value(C, active_user) * user_item_graph.get_edge_value(C, Dn)
+            ):
+                user_item_graph.add_edge(
+                    Dn,
+                    active_user,
+                    user_item_graph.get_edge_value(C, active_user) * user_item_graph.get_edge_value(C, Dn),
+                )
+                MaxSim[active_user] = (
+                    user_item_graph.get_edge_value(C, active_user) * user_item_graph.get_edge_value(C, Dn)
+                )
+                if (
+                    Dn not in Qb.queue
+                    and Dn not in Qa.queue
+                    and user_item_graph.get_edge_value(Dn, active_user) > MaxSim[active_user] / mu
+                ):
+                    Qa.put(Dn)
+
+        similarities[C] = user_item_graph.get_edge_value(C, active_user)
+
+    return similarities
