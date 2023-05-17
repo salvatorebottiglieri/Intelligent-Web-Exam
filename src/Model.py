@@ -1,8 +1,8 @@
-import numpy
+
 import numpy as np
 
 from src.Utils import read_dataset
-from src.WeightsComputation import get_items_in_common
+
 
 """
 This class represents the graph of users' similarities in the datasets. It's implemented
@@ -42,12 +42,10 @@ class SimilarityMatrix:
     
 
     def add_edge(self, a: int, b: int, value: np.float16) -> None:
-        if not self.are_connected(a, b):
-            raise Exception(f"Users {a} and {b} not have items in common\n")
-
         self.graph[a-1][b-1] = value
         self.graph[b-1][a-1] = value    
   
+
 
 
 """
