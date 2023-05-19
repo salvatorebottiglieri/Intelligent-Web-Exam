@@ -244,7 +244,7 @@ def weight(user1: int, user2:int, eot:float, dataset:pd.DataFrame) -> float:
 '''
 Rispetto all'implementazione fornita dallo pseudocodice all'interno del paper, 
 questa versione è stata modificata per ovviare ad un errore concettualmente presente
-nello pseudocodice. Nello pseudocodice, infatti, il controllo che permette di aggiungere
+nella prima. Nello pseudocodice, infatti, il controllo che permette di aggiungere
 un nodo alla coda Qa viene effettuato all'interno primo if, il quale, durante la prima iterazione,
 non viene mai eseguito. Questo comporta che i nodi collegati direttamente al nodo attivo non vengano
 mai aggiunti alla coda Qa, e quindi non vengano mai esplorati. Per ovviare a questo problema,
