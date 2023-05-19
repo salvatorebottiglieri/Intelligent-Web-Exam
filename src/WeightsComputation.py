@@ -249,6 +249,10 @@ un nodo alla coda Qa viene effettuato all'interno primo if, il quale, durante la
 non viene mai eseguito. Questo comporta che i nodi collegati direttamente al nodo attivo non vengano
 mai aggiunti alla coda Qa, e quindi non vengano mai esplorati. Per ovviare a questo problema,
 il controllo è stato spostato fuori dal primo if, in modo tale che venga eseguito ad ogni iterazione.
+
+Inoltre, tale versione deve essere richiamata su un grafo in cui siano già stati calcolati i vicini diretti,
+per questioni di ottimizzazioni, abbiamo deciso di fare quest'operazione una sola volta e non ogni volta che
+l'algoritmo veniva richiamato, cosa che nel paper di riferimento viene però fatta.
 '''
 
 def compute_similarity(user_item_graph, active_user, mu):
