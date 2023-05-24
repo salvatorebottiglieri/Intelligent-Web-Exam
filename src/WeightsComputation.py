@@ -187,20 +187,18 @@ def decay_function(
         denominator = alpha + sortd_fraction
         return alpha / denominator
 
-def time_factor(d_alpha:float,t_alpha:float,beta:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
+def time_factor(d_alpha:float,t_alpha:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     '''
     Time_factor is a function that computes the time factor between two users.
 
     :param d_alpha: The alpha parameter for decay function
     :param t_alpha: The alpha parameter for time factor
-    :param beta: The beta parameter
     :param user1: The first user
     :param user2: The second user
     :param dataset: The dataset to be used for the computation
     :return: The time factor between two users.
     '''
-    if t_alpha + beta != 1:
-        raise Exception("Alpha + Beta must be equal to 1")
+    beta = 1 - t_alpha
     
     first_addend = t_alpha * decay_function(d_alpha, user1, user2, dataset)
     second_addend = beta * (1- n_sord(user1, user2, dataset))
@@ -225,7 +223,7 @@ def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
     finally:
         return result
 
-def weight(user1: int, user2:int, eot:float, dataset:pd.DataFrame) -> float:
+def weight(user1: int, user2:int, eot:float, alpha:float, dataset:pd.DataFrame) -> float:
     '''
     weight is a function that computes the similarity of two users that have at least
     one item in common, considering time factor.
@@ -237,7 +235,7 @@ def weight(user1: int, user2:int, eot:float, dataset:pd.DataFrame) -> float:
     :return: The weight between two users.
     '''
     
-    return base_weight(eot, user1, user2, dataset) * (eot + ((1 - eot) * time_factor(2, 0.5, 0.5, user1, user2, dataset)) )
+    return base_weight(eot, user1, user2, dataset) * (eot + ((1 - eot) * time_factor(2, alpha, user1, user2, dataset)) )
 
 
 
