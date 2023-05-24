@@ -1,5 +1,6 @@
 
 import numpy as np
+import pandas as pd
 from definitions import ROOT_DIR
 
 from src.Utils import read_dataset
@@ -64,18 +65,43 @@ class UserItemMatrix:
         self.matrix = np.zeros(
             shape=(first_dimension, second_dimension), dtype=np.float16
         )
+        self.users = list()
+        self.items = list()
+        self.mapper = {}
+
+        
+    def set_items(self, items: list):
+        self.items = items
+    
+    def set_users(self,users:list):
+        self.users = users
+
+    def get_items(self):
+        return self.items
 
     def add_value(self, user: int, item: int, value: np.float16):
-        self.matrix[user][item] = value
+        self.matrix[user-1][item-1] = value
 
     def get_value(self, user: int, item: int):
-        return self.matrix[user][item]
+        return self.matrix[user-1][item-1]
 
     def get_items_rated_by(self, user: int):
-        return self.matrix[user]
+        return self.matrix[user-1]
 
     def get_users_who_rated(self, item: int):
-        return self.matrix[:, item]
+        return self.matrix[:, item-1]
 
     def print_matrix(self):
         print(self.matrix)
+
+    def map_movie_id_to_index(self, elems: list) -> int:
+        [self.add_to_mapper(elem, i) for i,elem in enumerate(elems)]
+
+    def add_to_mapper(self,key,value):
+        self.mapper[key] = value
+
+    def populate_matrix(self, dataset):
+        if len(self.items) == 0:
+            self.set_items(dataset["movieId"].unique())
+        self.map_movie_id_to_index(self.get_items())
+        dataset.apply(lambda x: self.add_value(int(x["userId"]), int(self.mapper[x["movieId"]]), x["rating"]), axis=1)

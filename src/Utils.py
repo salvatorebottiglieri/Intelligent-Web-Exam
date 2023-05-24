@@ -81,3 +81,4 @@ def max_timestamp(user:int, dataset:pd.DataFrame) -> int:
 
 def cut_time (min_time, max_time, d):
     return min_time + ((max_time - min_time) / d)
+

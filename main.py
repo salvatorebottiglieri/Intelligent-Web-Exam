@@ -1,8 +1,20 @@
-from src.Utils import cut_time
+from src.Model import SimilarityMatrix, UserItemMatrix
+from src.Utils import read_dataset
 
-min_time = 100
-max_time = 1000
-d=2
 
-cut_time = cut_time(min_time, max_time, d)
-print(cut_time)
+dataset = read_dataset(dataset_name="ml-latest-small")
+
+users = dataset["userId"].unique()
+items = dataset["movieId"].unique()
+
+user_item_matrix = UserItemMatrix(len(users),len(items))
+
+user_item_matrix.populate_matrix(dataset)
+
+user_item_matrix.print_matrix()
+
+# Iper-parametri
+EOR = 6
+alpha = 5
+EOT = 0.7
+
