@@ -1,5 +1,6 @@
 
 import numpy as np
+from definitions import ROOT_DIR
 
 from src.Utils import read_dataset
 
@@ -44,6 +45,8 @@ class SimilarityMatrix:
         self.graph[a-1][b-1] = value
         self.graph[b-1][a-1] = value    
   
+    def save(self) -> None:
+        np.save(f"{ROOT_DIR}/output/similarity_matrix.npy", self.graph)
 
 
 
