@@ -2,16 +2,14 @@ from math import e
 import pandas as pd
 from src.Utils import max_timestamp, minimum_timestamp, rating_time
 import numpy as np
+from typing import Dict, List
+from src.WeightsComputation import compute_similarity
+import math
+
 
 def time_impact(user:int, item:int, dataset:pd.Dataframe)-> float:
     e * ( (minimum_timestamp(user, dataset) + rating_time(user, item, dataset)) / (max_timestamp(user, dataset) - minimum_timestamp(user, dataset)) )
 
-<<<<<<< HEAD
-
-    
-
-
-=======
 def create_user_item_matrix():
     # Create a user-item matrix
     ratings = np.array([[3, 4, 0, 3, 5],
@@ -70,4 +68,44 @@ def generate_recommendations(ratings, predictions):
     # Print the recommendations for each user
     for i in range(ratings.shape[0]):
         print(f"User {i+1} recommendations: {recommendations[i]}")
->>>>>>> 3046cf8658da4ee888082ef44587f55059f69fb0
+
+
+def weighted_sum_of_others_ratings(user_item_graph, active_user, item):
+    r_u = user_item_graph.get_average_rating(active_user)
+    u = user_item_graph.get_similar_users(active_user)
+    numerator = 0
+    denominator = 0
+    for v in u:
+        if item in user_item_graph.get_rated_items(v):
+            r_v = user_item_graph.get_average_rating(v)
+            similarity = compute_similarity(user_item_graph, active_user, v)
+            numerator += similarity * (user_item_graph.get_rating(v, item) - r_v)
+            denominator += similarity
+    if denominator == 0:
+        return r_u
+    else:
+        return r_u + numerator / denominator
+
+
+    def weighted_sum_of_others_ratings_with_time(user_item_graph, active_user, item):
+        r_u = user_item_graph.get_average_rating(active_user)
+        u = user_item_graph.get_similar_users(active_user)
+        numerator = 0
+        denominator = 0
+        for v in u:
+            if item in user_item_graph.get_rated_items(v):
+                r_v = user_item_graph.get_average_rating(v)
+                similarity = compute_similarity(user_item_graph, active_user, v)
+                time_impact = time_impact_function(user_item_graph, v, item)
+                numerator += similarity * time_impact * (user_item_graph.get_rating(v, item) - r_v)
+                denominator += similarity * time_impact
+        if denominator == 0:
+            return r_u
+        else:
+            return r_u + numerator / denominator
+
+    def time_impact_function(user_item_graph, user, item):
+        min_t = min(user_item_graph.get_timestamps(user, item))
+        max_t = max(user_item_graph.get_timestamps(user, item))
+        t_v_i = user_item_graph.get_timestamp(user, item)
+        return math.exp((min_t + t_v_i) / (max_t - min_t))
