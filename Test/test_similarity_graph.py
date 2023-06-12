@@ -8,7 +8,7 @@ class TestSimilarityGraph:
     
     @pytest.fixture(scope = "class")
     def similarity_graph(self):
-        sm =  SimilarityMatrix(5)
+        sm =  SimilarityMatrix(5, "ml-latest-small")
         sm.add_edge(1, 2, 0.9)
         sm.add_edge(1, 4, 0.2)
         sm.add_edge(2, 3, 0.5)

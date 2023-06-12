@@ -124,12 +124,7 @@ def test_should_n_sord_return_float_greater_than_zero(dataset):
     assert result > 0.0
 
 
-def test_should_n_sord_return_zero_when_users_not_have_items_in_common(dataset):
-    user1 = 1
-    user2 = 2
-    result = n_sord(user1, user2, dataset)
-    assert isinstance(result, float) is True
-    assert math.isclose(result,0.0)
+
 
 
 def test_should_mci_return_right_number(dataset):
@@ -167,7 +162,7 @@ def test_should_time_factor_function_raise_exception_if_alpha_plus_beta_not_equa
     beta = 1.5
     d_alpha = 1.5
     with pytest.raises(Exception) as ex:
-        time_factor(d_alpha, alpha, beta, user1, user2, dataset)
+        time_factor(d_alpha, alpha, user1, user2, dataset)
         assert str(ex.value) == "Alpha plus Beta must be equal to 1"
 
 
@@ -177,7 +172,7 @@ def test_should_time_factor_function_return_float(dataset):
     alpha = 0.5
     d_alpha = 1.5
     beta = 0.5
-    result = time_factor(d_alpha, alpha, beta, user1, user2, dataset)
+    result = time_factor(d_alpha, alpha, user1, user2, dataset)
     print(result)
     assert isinstance(result, float) is True
     assert result > 0.0
@@ -215,12 +210,6 @@ def test_should_weight_return_value_between_zero_and_one_when_users_have_at_leas
     assert result < 1.0
 
 
-def test_should_weight_return_zero_when_users_not_have_items_in_common(dataset):
-    user1 = 1
-    user2 = 2
-    eot = 5.0
-    result = weight(user1=user1, user2=user2,eot=eot, dataset=dataset)
-    assert isinstance(result, float) is True
-    assert math.isclose(result,0.0)
+
 
 

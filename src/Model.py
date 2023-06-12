@@ -3,7 +3,8 @@ import numpy as np
 import pandas as pd
 from definitions import ROOT_DIR
 
-from src.Utils import read_dataset
+from src.Utils import get_users, read_dataset
+from src.WeightsComputation import weight
 
 
 """
@@ -16,12 +17,13 @@ means that there is an edge between two users and the value of the edge is the s
  
 
 class SimilarityMatrix:
-    def __init__(self, v: int) -> None:
+    def __init__(self, v: int,dataset_name:str) -> None:
         self.graph = np.full(
             shape=(v, v),
             fill_value=np.NINF,
             dtype=np.float16,
         )
+        self.dataset_name = dataset_name
 
 
     def are_connected(self, a: int, b: int) -> bool:
@@ -46,8 +48,31 @@ class SimilarityMatrix:
         self.graph[a-1][b-1] = value
         self.graph[b-1][a-1] = value    
   
+
     def save(self) -> None:
         np.save(f"{ROOT_DIR}/output/similarity_matrix.npy", self.graph)
+
+    def add_direct_similarities_for(self, active_user: int, alpha, eot, eor,dataset) -> None:
+        users = get_users(dataset=dataset)
+        for user in users:
+            if user != active_user:
+                self.add_edge(active_user, user,weight(user1=active_user,user2=user,
+                                                       alpha=alpha,eot=eot,eor=eor,
+                                                       dataset=dataset))
+
+    def populate_matrix_from_dataset(self,alpha, eot, eor)-> None:
+        dataset = read_dataset(dataset_name=self.dataset_name)
+        users = get_users(dataset=dataset)
+
+        for user in users:
+            self.add_direct_similarities_for(user,alpha, eot, eor,dataset)
+
+    
+        
+        
+            
+
+
 
 
 

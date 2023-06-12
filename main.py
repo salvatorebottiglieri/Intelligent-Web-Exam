@@ -1,5 +1,10 @@
 import numpy as np
 
+# Iper-parametri
+EOR = 6
+ALPHA = 5
+EOT = 0.7
+
 # Define a dictionary to map IDs to integers
 id_to_int = {}
 
@@ -30,14 +35,6 @@ dataset = read_dataset(dataset_name="ml-latest-small")
 users = dataset["userId"].unique()
 items = dataset["movieId"].unique()
 
-user_item_matrix = UserItemMatrix(len(users),len(items))
-
-user_item_matrix.populate_matrix(dataset)
-
-user_item_matrix.print_matrix()
-
-# Iper-parametri
-EOR = 6
-alpha = 5
-EOT = 0.7
-
+user_user_graph = SimilarityMatrix(len(users),"ml-latest-small")
+user_user_graph.populate_matrix_from_dataset(ALPHA, EOT, EOR)
+user_user_graph.save()

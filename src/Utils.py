@@ -82,3 +82,9 @@ def max_timestamp(user:int, dataset:pd.DataFrame) -> int:
 def cut_time (min_time, max_time, d):
     return min_time + ((max_time - min_time) / d)
 
+
+def get_users(dataset:pd.DataFrame) -> list:
+    return dataset['userId'].unique().tolist()
+
+def get_neighbours(user:int, dataset:pd.DataFrame) -> list:
+    return dataset[dataset['userId'] == user]['movieId'].unique().tolist()

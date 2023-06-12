@@ -2,8 +2,6 @@ import numpy as np
 import pandas as pd
 from queue import Queue
 
-from src.Model import SimilarityMatrix
-
 
 def sortd(user1: int, user2: int, label: str, dataset: pd.DataFrame) -> float:
     """
@@ -130,9 +128,6 @@ def n_sord(user1: int, user2: int, dataset: pd.DataFrame) -> float:
     :param dataset: The dataset to be used for the computation
     :return: The normalized sortd between two users.
     '''
-    if get_items_in_common(user1, user2, dataset).shape[0] == 0:
-        return 0.0
-
     return sortd(user1, user2, "rating", dataset) / mratediff(
         user1, user2, dataset["rating"].max(), dataset
     )
@@ -220,14 +215,15 @@ def base_weight(eor:float,user1:int,user2:int,dataset:pd.DataFrame) -> float:
         result =  proportion(user1, user2, dataset) * (1 - (sortd(user1, user2, "rating", dataset) / mratediff(user1, user2, 5, dataset))**(1/eor) )
     except ZeroDivisionError:
         result = 0.0
-    finally:
-        return result
 
-def weight(user1: int, user2:int, eot:float, alpha:float, dataset:pd.DataFrame) -> float:
+    return result
+
+def weight(user1: int, user2:int, dataset:pd.DataFrame, eor=6.0, eot=0.7, alpha=5.0) -> float:
     '''
     weight is a function that computes the similarity of two users that have at least
     one item in common, considering time factor.
 
+    :param eor: says how much the rating factor affects the weight
     :param eot: says how much the time factor affects the weight
     :param user1: The first user
     :param user2: The second user
@@ -235,7 +231,7 @@ def weight(user1: int, user2:int, eot:float, alpha:float, dataset:pd.DataFrame) 
     :return: The weight between two users.
     '''
     
-    return base_weight(eot, user1, user2, dataset) * (eot + ((1 - eot) * time_factor(2, alpha, user1, user2, dataset)) )
+    return base_weight(eor, user1, user2, dataset) * (eot + ((1 - eot) * time_factor(2, alpha, user1, user2, dataset)) )
 
 
 
